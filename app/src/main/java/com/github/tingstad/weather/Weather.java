@@ -9,17 +9,42 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 
+import static java.lang.Integer.parseInt;
+
 public class Weather {
 
     private final static int HTTP_OK = 200;
+    private final HttpServer httpServer;
+    private boolean stop;
 
     public static void main(String[] args) {
+        Weather weather = new Weather();
+        weather.run(args);
+        while (!weather.stop) {
+            try {
+                Thread.sleep(3_000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        weather.stop();
+    }
+
+    public Weather() {
+        httpServer = createHttpServer();
+    }
+
+    void run(String[] args) {
         System.out.println("Hello");
-        new Weather().run(8080);
+        run(parseInt(args[0]));
+    }
+
+    public void stop() {
+        stop = true;
+        httpServer.stop(0);
     }
 
     public void run(int port) {
-        HttpServer httpServer = createHttpServer();
         httpServer.createContext("/", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
@@ -42,14 +67,6 @@ public class Weather {
             throw new RuntimeException(e);
         }
         httpServer.start();
-
-        while (true) {
-            try {
-                Thread.sleep(5_000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     private static HttpServer createHttpServer() {
