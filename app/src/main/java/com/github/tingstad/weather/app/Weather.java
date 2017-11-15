@@ -1,5 +1,6 @@
-package com.github.tingstad.weather;
+package com.github.tingstad.weather.app;
 
+import com.github.tingstad.weather.service.Service;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -16,19 +17,6 @@ public class Weather {
     private final static int HTTP_OK = 200;
     private final HttpServer httpServer;
     private boolean stop;
-
-    public static void main(String[] args) {
-        Weather weather = new Weather();
-        weather.run(args);
-        while (!weather.stop) {
-            try {
-                Thread.sleep(3_000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        weather.stop();
-    }
 
     public Weather() {
         httpServer = createHttpServer();

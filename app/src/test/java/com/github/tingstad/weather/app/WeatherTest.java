@@ -1,4 +1,4 @@
-package com.github.tingstad.weather;
+package com.github.tingstad.weather.app;
 
 import org.junit.After;
 import org.junit.Before;
