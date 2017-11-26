@@ -6,7 +6,7 @@ main() {
     [ -d mods ] && rm -r mods/
     mkdir mods
 
-    for module in service-api ;do
+    for module in service-api service-yr ;do
         build $module
     done
     build app com.github.tingstad.weather.app.Main
