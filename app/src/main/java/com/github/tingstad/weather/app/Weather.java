@@ -1,8 +1,6 @@
 package com.github.tingstad.weather.app;
 
-import com.github.tingstad.weather.service.Service;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import com.github.tingstad.weather.service.api.Service;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -33,20 +31,18 @@ public class Weather {
     }
 
     public void run(int port) {
-        httpServer.createContext("/", new HttpHandler() {
-            @Override
-            public void handle(HttpExchange exchange) throws IOException {
-                try (
-                        OutputStream responseBody = exchange.getResponseBody();
-                        OutputStreamWriter writer = new OutputStreamWriter(
-                                responseBody)
-                ) {
-                    String data = "Hei";
-                    writer.append(data);
-                    exchange.sendResponseHeaders(HTTP_OK, data.length());
-                } catch (IOException e) {
-                    throw e;
-                }
+        httpServer.createContext("/", httpExchange -> {
+            try (
+                    OutputStream responseBody = httpExchange.getResponseBody();
+                    OutputStreamWriter writer = new OutputStreamWriter(
+                            responseBody)
+            ) {
+                Service service;
+                String data = "Hei";
+                writer.append(data);
+                httpExchange.sendResponseHeaders(HTTP_OK, data.length());
+            } catch (IOException e) {
+                throw e;
             }
         });
         try {

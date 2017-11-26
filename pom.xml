@@ -11,7 +11,7 @@
 		<maven.compiler.target>1.9</maven.compiler.target>
 	</properties>
 	<modules>
-		<module>service</module>
+		<module>service-api</module>
 		<module>app</module>
 	</modules>
 	<build>

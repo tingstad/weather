@@ -10,7 +10,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>weather-service</artifactId>
+			<artifactId>weather-service-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
