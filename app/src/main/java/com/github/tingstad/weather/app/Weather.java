@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
+import java.util.ServiceLoader;
 
 import static java.lang.Integer.parseInt;
 
@@ -37,8 +38,10 @@ public class Weather {
                     OutputStreamWriter writer = new OutputStreamWriter(
                             responseBody)
             ) {
-                Service service;
-                String data = "Hei";
+                ServiceLoader<Service> loader = ServiceLoader.load(Service.class);
+                String data = loader.findFirst()
+                        .map(Service::getText)
+                        .orElse("No service");
                 writer.append(data);
                 httpExchange.sendResponseHeaders(HTTP_OK, data.length());
             } catch (IOException e) {
