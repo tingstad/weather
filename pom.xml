@@ -12,6 +12,7 @@
 	</properties>
 	<modules>
 		<module>service-api</module>
+		<module>sms-service</module>
 		<module>app</module>
 		<module>service-yr</module>
 	</modules>

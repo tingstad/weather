@@ -9,9 +9,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.io.InputStream;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.round;
@@ -56,17 +59,31 @@ public class ServiceYr implements Service {
         Document document = builder.parse(inputStream);
 
         XPath xpath = XPathFactory.newInstance().newXPath();
-        String expression = "/weatherdata/forecast/tabular/time[@period='2']";
-        Node periode = xpath.evaluateExpression(expression, document, Node.class);
+        String timezone = xpath.evaluateExpression(
+                "/weatherdata/location/timezone/@id", document, Node.class).getTextContent();
+        Node periode = xpath.evaluateExpression(
+                "/weatherdata/forecast/tabular/time[@period='2']", document, Node.class);
+        String from = xpath.evaluateExpression(
+                "@from", periode, Node.class).getTextContent();
+        String to = xpath.evaluateExpression(
+                "@to", periode, Node.class).getTextContent();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone(timezone));
+        String fromString = sdf.parse(from).toInstant().atZone(ZoneId.of(timezone))
+                .format(DateTimeFormatter.ofPattern("dd/MM HH"));
+        String toString = sdf.parse(to).toInstant().atZone(ZoneId.of(timezone))
+                .format(DateTimeFormatter.ofPattern("HH"));
         String symbol = xpath.evaluateExpression(
-                "symbol/@*", periode, Node.class).getTextContent();
+                "symbol/@name", periode, Node.class).getTextContent();
         String precipitation = xpath.evaluateExpression(
                 "precipitation/@value", periode, Node.class).getTextContent();
         String windSpeed = xpath.evaluateExpression(
                 "windSpeed/@name", periode, Node.class).getTextContent();
         String temperature = xpath.evaluateExpression(
                 "temperature/@value", periode, Node.class).getTextContent();
-        return String.format("%s, %smm, %s, %s grader",
+        return String.format("%s-%s: %s, %smm, %s, %s grader",
+                fromString,
+                toString,
                 symbol,
                 round(parseDouble(precipitation)),
                 windSpeed,

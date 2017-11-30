@@ -10,13 +10,13 @@ import java.net.URL;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class WeatherTest {
+public class WebServerTest {
 
-    private Weather weather;
+    private WebServer weather;
 
     @Before
     public void setUp() {
-        weather = new Weather();
+        weather = new WebServer();
     }
 
     @After

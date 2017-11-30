@@ -1,9 +1,9 @@
 package com.github.tingstad.weather.app;
 
-public class Main {
+public class MainWeb {
 
     public static void main(String[] args) {
-        Weather weather = new Weather();
+        WebServer weather = new WebServer();
         weather.run(args);
         while (true /*!weather.stop*/) {
             try {

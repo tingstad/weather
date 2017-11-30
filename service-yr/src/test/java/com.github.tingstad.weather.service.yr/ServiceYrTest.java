@@ -19,7 +19,7 @@ public class ServiceYrTest {
 
         String text = service.getText();
 
-        assertThat(text, is("Snø, 1mm, Frisk bris, 1 grader"));
+        assertThat(text, is("28/11 12-18: Snø, 1mm, Frisk bris, 1 grader"));
     }
 
 }

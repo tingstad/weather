@@ -3,7 +3,6 @@ package com.github.tingstad.weather.service.yr;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Scanner;
 
 public class YrDataSource implements DataSource {
 
@@ -28,13 +27,6 @@ public class YrDataSource implements DataSource {
         httpURLConnection.setReadTimeout(1_000);
 
         return httpURLConnection.getInputStream();
-/*
-        try (InputStream inputStream = httpURLConnection.getInputStream();
-             Scanner scanner = new Scanner(inputStream, "UTF-8")
-                     .useDelimiter("\\A")
-        ) {
-            return scanner.next();
-        }*/
     }
 
 }
