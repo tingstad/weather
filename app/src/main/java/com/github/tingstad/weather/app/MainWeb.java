@@ -1,18 +1,19 @@
 package com.github.tingstad.weather.app;
 
+import com.github.tingstad.weather.service.api.RealOsloTimeProvider;
+
 public class MainWeb {
 
     public static void main(String[] args) {
-        WebServer weather = new WebServer();
-        weather.run(args);
-        while (true /*!weather.stop*/) {
+        WebServer webServer = new WebServer(new Weather(new RealOsloTimeProvider()));
+        webServer.run(args);
+        while (true) {
             try {
-                Thread.sleep(3_000);
+                Thread.sleep(9_000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-//        weather.stop();
     }
 
 }

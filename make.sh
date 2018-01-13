@@ -12,6 +12,7 @@ main() {
     done
     build app com.github.tingstad.weather.app.MainWeb
     echo 'java --module-path mods/ --module com.github.tingstad.weather.app 8080'
+    echo 'java --module-path mods/ --module com.github.tingstad.weather.app/com.github.tingstad.weather.app.MainJob'
 }
 
 build() {

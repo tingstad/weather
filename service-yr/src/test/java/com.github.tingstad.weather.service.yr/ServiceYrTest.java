@@ -1,6 +1,7 @@
 package com.github.tingstad.weather.service.yr;
 
 import com.github.tingstad.weather.service.api.Service;
+import com.github.tingstad.weather.service.yr.internal.DataSource;
 import org.junit.Test;
 
 import java.io.InputStream;
