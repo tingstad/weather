@@ -21,7 +21,7 @@ public class MainJob {
     }
 
     public void work() {
-        if (!shouldWork()) {
+        if (!shouldDoWork()) {
             return;
         }
         String content = new Weather().getContent();
@@ -29,7 +29,7 @@ public class MainJob {
         new SmsService().sendSms(content);
     }
 
-    boolean shouldWork() {
+    boolean shouldDoWork() {
         LocalDateTime time = timeProvider.getTime();
         return EnumSet.of(DayOfWeek.MONDAY).contains(time.getDayOfWeek());
     }

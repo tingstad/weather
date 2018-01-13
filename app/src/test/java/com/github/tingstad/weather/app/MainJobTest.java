@@ -18,7 +18,7 @@ public class MainJobTest {
 
         MainJob job = new MainJob(timeProvider);
 
-        assertThat(job.shouldWork(), is(true));
+        assertThat(job.shouldDoWork(), is(true));
     }
 
     @Test
@@ -28,7 +28,7 @@ public class MainJobTest {
 
         MainJob job = new MainJob(timeProvider);
 
-        assertThat(job.shouldWork(), is(false));
+        assertThat(job.shouldDoWork(), is(false));
     }
 
 }
