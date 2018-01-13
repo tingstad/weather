@@ -1,4 +1,4 @@
-package com.github.tingstad.weather.service.yr;
+package com.github.tingstad.weather.service.yr.internal;
 
 import java.io.InputStream;
 

@@ -1,19 +1,20 @@
 package com.github.tingstad.weather.app;
 
 import com.github.tingstad.weather.service.api.Service;
+import com.github.tingstad.weather.service.api.TimeProvider;
+import com.github.tingstad.weather.service.yr.ServiceCached;
+import com.github.tingstad.weather.service.yr.ServiceYr;
 
-import java.util.ServiceLoader;
+public class Weather implements WeatherInterface {
 
-public class Weather {
+    private final Service yrService;
 
-    public Weather() {
+    public Weather(TimeProvider timeProvider) {
+        yrService = new ServiceCached(new ServiceYr(), timeProvider);
     }
 
     public String getContent() {
-        ServiceLoader<Service> loader = ServiceLoader.load(Service.class);
-        String data = loader.findFirst()
-                .map(Service::getText)
-                .orElse("No service");
+        String data = yrService.getText();
         return data;
     }
 

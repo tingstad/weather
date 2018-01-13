@@ -1,5 +1,7 @@
 package com.github.tingstad.weather.app;
 
+import com.github.tingstad.weather.service.api.RealOsloTimeProvider;
+import com.github.tingstad.weather.service.api.TimeProvider;
 import com.github.tingstad.weather.sms.SmsService;
 
 import java.time.DayOfWeek;
@@ -24,7 +26,7 @@ public class MainJob {
         if (!shouldDoWork()) {
             return;
         }
-        String content = new Weather().getContent();
+        String content = new Weather(timeProvider).getContent();
 
         new SmsService().sendSms(content);
     }

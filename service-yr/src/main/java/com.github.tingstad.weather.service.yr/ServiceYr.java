@@ -1,6 +1,8 @@
 package com.github.tingstad.weather.service.yr;
 
 import com.github.tingstad.weather.service.api.Service;
+import com.github.tingstad.weather.service.yr.internal.DataSource;
+import com.github.tingstad.weather.service.yr.internal.YrDataSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -10,10 +12,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.time.*;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
 import static java.lang.Double.parseDouble;
@@ -22,7 +22,6 @@ import static java.lang.Math.round;
 public class ServiceYr implements Service {
 
     private final DataSource dataSource;
-    private final Map<LocalDateTime, String> cache = new HashMap<>();
 
     public ServiceYr() {
         this(new YrDataSource());
@@ -34,21 +33,14 @@ public class ServiceYr implements Service {
 
     @Override
     public String getText() {
-        return cache.keySet().stream()
-                .filter(time -> time.plusMinutes(5).isAfter(LocalDateTime.now()))
-                .findFirst()
-                .map(key -> cache.get(key)).orElseGet(() -> {
-                    String value = getValue();
-                    cache.clear();
-                    cache.put(LocalDateTime.now(), value);
-                    return value;
-                });
+        return getValue();
     }
 
     private String getValue() {
         try (InputStream inputStream = dataSource.getData()) {
             return process(inputStream);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
