@@ -14,6 +14,7 @@
 		<module>service-api</module>
 		<module>sms-service</module>
 		<module>app</module>
+		<module>cache</module>
 		<module>service-yr</module>
 	</modules>
 	<build>

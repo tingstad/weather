@@ -2,7 +2,7 @@ package com.github.tingstad.weather.app;
 
 import com.github.tingstad.weather.service.api.Service;
 import com.github.tingstad.weather.service.api.TimeProvider;
-import com.github.tingstad.weather.service.yr.ServiceCached;
+import com.github.tingstad.weather.service.cache.ServiceCached;
 import com.github.tingstad.weather.service.yr.ServiceYr;
 
 public class Weather implements WeatherInterface {

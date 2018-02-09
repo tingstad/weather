@@ -1,4 +1,4 @@
-package com.github.tingstad.weather.service.yr;
+package com.github.tingstad.weather.service.cache;
 
 import com.github.tingstad.weather.service.api.Service;
 import com.github.tingstad.weather.service.api.TimeProvider;
