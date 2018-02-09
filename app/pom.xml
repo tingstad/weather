@@ -13,7 +13,6 @@
 			<artifactId>service-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>sms-service</artifactId>
@@ -41,7 +40,6 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 	<build>
 		<plugins>
@@ -54,6 +52,7 @@
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
+						<phase>prepare-package</phase>
 					</execution>
 				</executions>
 				<configuration>
