@@ -1,6 +1,8 @@
 package com.github.tingstad.weather.app;
 
 import com.sun.net.httpserver.HttpServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,6 +16,7 @@ import static java.lang.Integer.parseInt;
 
 public class WebServer {
 
+    private final static Logger logger = LoggerFactory.getLogger(WebServer.class);
     private final static int HTTP_OK = 200;
     private final static int HTTP_ERROR = 500;
     private final HttpServer httpServer;
@@ -35,7 +38,7 @@ public class WebServer {
 
     void run(String[] args) {
         int port = parseInt(args[0]);
-        System.out.println("Listening on " + port);
+        logger.info("Listening on " + port);
         run(port);
     }
 
@@ -102,7 +105,7 @@ public class WebServer {
         try {
             return Optional.of(weather.getContent());
         } catch (RuntimeException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
             return Optional.empty();
         }
     }

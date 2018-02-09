@@ -5,6 +5,12 @@ set -o errexit
 main() {
     [ -d mods ] && rm -r mods/
     mkdir mods
+    REPO="$(mvn -B help:evaluate -Dexpression=settings.localRepository | grep -v ^\\[)"
+    cp \
+        "$REPO"/ch/qos/logback/logback-classic/1.2.3/*.jar \
+        "$REPO"/ch/qos/logback/logback-core/1.2.3/*.jar \
+        "$REPO"/org/slf4j/slf4j-api/1.7.25/*.jar \
+        mods/
 
     for module in service-api service-yr sms-service
     do

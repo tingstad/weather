@@ -3,4 +3,5 @@ module com.github.tingstad.weather.app {
     requires com.github.tingstad.weather.service.api;
     requires com.github.tingstad.weather.sms.service;
     requires com.github.tingstad.weather.service.yr;
+    requires slf4j.api;
 }
