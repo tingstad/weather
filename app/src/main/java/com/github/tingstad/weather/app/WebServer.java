@@ -50,7 +50,7 @@ public class WebServer {
             final Optional<String> content = getContent()
                     .map(toHtml());
             final int responseCode = content.map(c -> HTTP_OK).orElse(HTTP_ERROR);
-            final Integer responseLength = getResponseLength(content);
+            final int responseLength = getResponseLength(content);
             httpExchange.sendResponseHeaders(responseCode, responseLength);
             try (
                     OutputStream responseBody = httpExchange.getResponseBody();
