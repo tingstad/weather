@@ -33,22 +33,31 @@ public class ServiceYr implements Service {
 
     @Override
     public String getText() {
-        return getValue();
-    }
-
-    private String getValue() {
-        try (InputStream inputStream = dataSource.getData()) {
-            return process(inputStream);
+        try {
+            return getValue();
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
-    private String process(InputStream inputStream) throws Exception {
+    private String getValue() throws Exception {
+        final Document document;
+        try (InputStream inputStream = dataSource.getData()) {
+            document = parse(inputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return process(document);
+    }
 
+    private Document parse(InputStream inputStream) throws Exception {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = builder.parse(inputStream);
+        return document;
+    }
+
+    private String process(Document document) throws Exception {
 
         XPath xpath = XPathFactory.newInstance().newXPath();
         String timezone = xpath.evaluateExpression(
