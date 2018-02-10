@@ -1,12 +1,12 @@
 package com.github.tingstad.weather.service.yr;
 
 import com.github.tingstad.weather.service.api.Service;
-import com.github.tingstad.weather.service.yr.internal.DataSource;
 import org.junit.Test;
 
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.function.Supplier;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -25,10 +25,10 @@ public class ServiceYrTest {
 
 }
 
-class FileDataSource implements DataSource {
+class FileDataSource implements Supplier<InputStream> {
 
     @Override
-    public InputStream getData() {
+    public InputStream get() {
         try {
             return
                     Files.newInputStream(

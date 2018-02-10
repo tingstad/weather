@@ -1,7 +1,6 @@
 package com.github.tingstad.weather.service.yr;
 
 import com.github.tingstad.weather.service.api.Service;
-import com.github.tingstad.weather.service.yr.internal.DataSource;
 import com.github.tingstad.weather.service.yr.internal.YrDataSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -15,19 +14,20 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
+import java.util.function.Supplier;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.round;
 
 public class ServiceYr implements Service {
 
-    private final DataSource dataSource;
+    private final Supplier<InputStream> dataSource;
 
     public ServiceYr() {
         this(new YrDataSource());
     }
 
-    ServiceYr(DataSource dataSource) {
+    ServiceYr(Supplier<InputStream> dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -42,7 +42,7 @@ public class ServiceYr implements Service {
 
     private String getValue() throws Exception {
         final Document document;
-        try (InputStream inputStream = dataSource.getData()) {
+        try (InputStream inputStream = dataSource.get()) {
             document = parse(inputStream);
         } catch (Exception e) {
             e.printStackTrace();

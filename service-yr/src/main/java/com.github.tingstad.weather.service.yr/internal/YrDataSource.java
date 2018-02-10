@@ -3,13 +3,14 @@ package com.github.tingstad.weather.service.yr.internal;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.function.Supplier;
 
-public class YrDataSource implements DataSource {
+public class YrDataSource implements Supplier<InputStream> {
 
     private final static String URL = "http://www.yr.no/sted/Norge/Oslo/Oslo/Oslo/varsel.xml";
 
     @Override
-    public InputStream getData() {
+    public InputStream get() {
         try {
             return getFromUrl();
         } catch (Exception e) {
