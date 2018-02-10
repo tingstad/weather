@@ -5,7 +5,7 @@ import com.github.tingstad.weather.service.api.RealOsloTimeProvider;
 public class MainWeb {
 
     public static void main(String[] args) {
-        WebServer webServer = new WebServer(new Weather(new RealOsloTimeProvider()));
+        WebServer webServer = new WebServer(new Composer().create(new RealOsloTimeProvider()));
         webServer.run(args);
         while (true) {
             try {

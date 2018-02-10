@@ -23,12 +23,12 @@ public class MainJob {
     }
 
     public void work() {
-        if (!shouldDoWork()) {
-            return;
+        Status status = new Composer().create(timeProvider).getStatus();
+        String content = status.getText();
+        boolean shouldSendSms = status.isCritical() || shouldDoWork();
+        if (shouldSendSms) {
+            new SmsService().sendSms(content);
         }
-        String content = new Weather(timeProvider).getContent();
-
-        new SmsService().sendSms(content);
     }
 
     boolean shouldDoWork() {

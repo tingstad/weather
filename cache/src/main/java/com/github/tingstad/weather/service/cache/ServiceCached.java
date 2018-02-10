@@ -7,6 +7,14 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ *  ,d88b.d88b,
+ *  88888888888  Decorator
+ *  `Y8888888Y'  pattern
+ *    `Y888Y'
+ *      `Y'
+ */
 public class ServiceCached implements Service {
 
     private final Service origin;

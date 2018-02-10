@@ -31,7 +31,7 @@ public class WebServerTest {
 
     @Test
     public void testPort8080() throws Exception {
-        WeatherInterface weather = () -> "alt ok";
+        WeatherInterface weather = () -> new Status("alt ok", false);
         webServer = new WebServer(weather);
 
         webServer.run(new String[]{"8080"});
@@ -61,7 +61,7 @@ public class WebServerTest {
 
     @Test
     public void testPortOtherThan8080() throws Exception {
-        WeatherInterface weather = () -> "alt ok";
+        WeatherInterface weather = () -> new Status("alt ok", false);
         webServer = new WebServer(weather);
 
         final String port = "36856";

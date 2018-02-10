@@ -17,6 +17,7 @@
 		<module>cache</module>
 		<module>http-client</module>
 		<module>service-yr</module>
+		<module>service-ruter</module>
 	</modules>
 	<build>
 		<plugins>
