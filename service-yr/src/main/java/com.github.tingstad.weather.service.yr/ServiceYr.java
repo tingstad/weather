@@ -1,7 +1,6 @@
 package com.github.tingstad.weather.service.yr;
 
 import com.github.tingstad.weather.service.api.Service;
-import com.github.tingstad.weather.service.yr.internal.YrDataSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -19,15 +18,18 @@ import java.util.function.Supplier;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.round;
 
+/**
+ * Gets data from dataSource InputStream and transforms it into
+ * readable weather forecast text.
+ *
+ * Expects data to be of the following format:
+ * http://om.yr.no/verdata/xml/spesifikasjon/
+ */
 public class ServiceYr implements Service {
 
     private final Supplier<InputStream> dataSource;
 
-    public ServiceYr() {
-        this(new YrDataSource());
-    }
-
-    ServiceYr(Supplier<InputStream> dataSource) {
+    public ServiceYr(Supplier<InputStream> dataSource) {
         this.dataSource = dataSource;
     }
 
