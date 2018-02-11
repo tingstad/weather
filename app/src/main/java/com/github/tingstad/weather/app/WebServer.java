@@ -103,7 +103,7 @@ public class WebServer {
 
     private Optional<String> getContent() {
         try {
-            return Optional.of(weather.getContent());
+            return Optional.of(weather.getStatus().getText());
         } catch (RuntimeException e) {
             logger.error("Error", e);
             return Optional.empty();

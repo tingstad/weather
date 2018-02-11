@@ -5,5 +5,6 @@ module com.github.tingstad.weather.app {
     requires com.github.tingstad.weather.service.cache;
     requires com.github.tingstad.weather.http;
     requires com.github.tingstad.weather.service.yr;
+    requires com.github.tingstad.weather.service.ruter;
     requires slf4j.api;
 }

@@ -12,6 +12,7 @@ import java.net.ConnectException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.Scanner;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -147,6 +148,54 @@ public class HttpClientTest {
         } catch (RuntimeException e) {
             assertEquals(e.getCause().getClass(), SocketTimeoutException.class);
         }
+    }
+
+    @Test
+    public void providedHeaderShouldBeSent() {
+        WireMock.stubFor(
+                WireMock.get("/path")
+                        .withHeader("Foo", WireMock.equalTo("Too"))
+                        .willReturn(
+                                WireMock.ok()
+                        )
+        );
+        new HttpClient(wireMockRule.url("/path"))
+                .header("Foo", "Too")
+                .get();
+    }
+
+    @Test
+    public void providedHeadersShouldBeSent() {
+        WireMock.stubFor(
+                WireMock.get("/path")
+                        .withHeader("Foo", WireMock.equalTo("Too"))
+                        .withHeader("Boo", WireMock.equalTo("Coo"))
+                        .willReturn(
+                                WireMock.ok()
+                        )
+        );
+        new HttpClient(wireMockRule.url("/path"))
+                .header("Foo", "Too")
+                .header("Boo", "Coo")
+                .get();
+    }
+
+    @Test
+    public void providedHeadersInMapShouldBeSent() {
+        WireMock.stubFor(
+                WireMock.get("/path")
+                        .withHeader("Foo", WireMock.equalTo("Too"))
+                        .withHeader("Boo", WireMock.equalTo("Coo"))
+                        .willReturn(
+                                WireMock.ok()
+                        )
+        );
+        new HttpClient(wireMockRule.url("/path"))
+                .headers(Map.of(
+                        "Foo", "Too",
+                        "Boo", "Coo")
+                )
+                .get();
     }
 
 }
