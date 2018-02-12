@@ -1,5 +1,6 @@
 package com.github.tingstad.weather.app;
 
+import com.github.tingstad.weather.domain.Status;
 import com.github.tingstad.weather.service.api.RealOsloTimeProvider;
 import com.github.tingstad.weather.service.api.TimeProvider;
 import com.github.tingstad.weather.sms.SmsService;

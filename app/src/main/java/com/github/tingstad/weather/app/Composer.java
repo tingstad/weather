@@ -1,5 +1,6 @@
 package com.github.tingstad.weather.app;
 
+import com.github.tingstad.weather.domain.Weather;
 import com.github.tingstad.weather.http.HttpClient;
 import com.github.tingstad.weather.service.api.Service;
 import com.github.tingstad.weather.service.api.TimeProvider;

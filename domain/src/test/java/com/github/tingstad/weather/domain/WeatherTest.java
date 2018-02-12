@@ -1,4 +1,4 @@
-package com.github.tingstad.weather.app;
+package com.github.tingstad.weather.domain;
 
 import org.junit.Test;
 

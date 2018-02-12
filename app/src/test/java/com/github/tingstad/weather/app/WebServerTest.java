@@ -1,5 +1,7 @@
 package com.github.tingstad.weather.app;
 
+import com.github.tingstad.weather.domain.Status;
+import com.github.tingstad.weather.domain.WeatherInterface;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

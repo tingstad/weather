@@ -1,4 +1,4 @@
-package com.github.tingstad.weather.app;
+package com.github.tingstad.weather.domain;
 
 import com.github.tingstad.weather.service.api.Service;
 import org.slf4j.Logger;
@@ -13,6 +13,9 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
 
+/**
+ * ♥ Dependency Inversion ♥
+ */
 public class Weather implements WeatherInterface {
 
     private final static Logger logger = LoggerFactory.getLogger(Weather.class);

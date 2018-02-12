@@ -13,6 +13,7 @@
 	<modules>
 		<module>service-api</module>
 		<module>sms-service</module>
+		<module>domain</module>
 		<module>app</module>
 		<module>cache</module>
 		<module>http-client</module>
