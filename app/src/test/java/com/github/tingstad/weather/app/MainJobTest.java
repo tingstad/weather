@@ -4,14 +4,12 @@ import com.github.tingstad.weather.domain.Status;
 import com.github.tingstad.weather.domain.Status.Priority;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class MainJobTest {
 
-    private MainJob job = new MainJob(() -> LocalDateTime.now());
+    private MainJob job = new MainJob();
 
     @Test
     public void highPriorityShouldSendSms() {
