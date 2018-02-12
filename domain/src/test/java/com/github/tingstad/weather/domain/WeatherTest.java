@@ -107,4 +107,37 @@ public class WeatherTest {
         assertThat(status.getText(), is("r2\ny1"));
     }
 
+    @Test
+    public void yrExceptionShouldReturnErrorString() throws Exception {
+        Weather weather = new Weather(
+                () -> { throw new RuntimeException("yr"); },
+                () -> "ruter");
+
+        Status status = weather.getStatus();
+
+        assertThat(status.getText(), is("ruter\nError yr"));
+    }
+
+    @Test
+    public void ruterExceptionShouldReturnErrorString() throws Exception {
+        Weather weather = new Weather(
+                () -> "yr",
+                () -> { throw new RuntimeException("yr"); });
+
+        Status status = weather.getStatus();
+
+        assertThat(status.getText(), is("Error ruter\nyr"));
+    }
+
+    @Test
+    public void yrExceptionShouldReturnCriticalStatus() throws Exception {
+        Weather weather = new Weather(
+                () -> { throw new RuntimeException("yr"); },
+                () -> "");
+
+        Status status = weather.getStatus();
+
+        assertThat(status.isCritical(), is(true));
+    }
+
 }

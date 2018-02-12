@@ -43,14 +43,24 @@ public class Weather implements WeatherInterface {
                 () -> yrService.getText(),
                 () -> ruterService.getText())
                 , 30, TimeUnit.SECONDS);
-        String yr = futures.get(0).get();
-        String ruter = futures.get(1).get();
-        boolean ruterHasContent = ruter.length() > 0;
+        Status yr = getStatus(futures.get(0), "yr");
+        Status ruter = getStatus(futures.get(1), "ruter");
+        boolean ruterHasContent = ruter.getText().length() > 0;
+        boolean critical = ruterHasContent || yr.isCritical();
         return new Status(
-                ruter
+                ruter.getText()
                         + (ruterHasContent ? "\n" : "")
-                        + yr
-                , ruterHasContent);
+                        + yr.getText()
+                , critical);
+    }
+
+    private static Status getStatus(Future<String> future, String name) throws InterruptedException, ExecutionException {
+        try {
+            return new Status(future.get(), false);
+        } catch (Exception e) {
+            logger.error(name, e);
+            return new Status("Error " + name, true);
+        }
     }
 
 }
