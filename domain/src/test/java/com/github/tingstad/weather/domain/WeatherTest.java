@@ -1,7 +1,12 @@
 package com.github.tingstad.weather.domain;
 
+import com.github.tingstad.weather.domain.Status.Priority;
+import com.github.tingstad.weather.service.api.TimeProvider;
 import org.junit.Test;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.core.Is.is;
@@ -9,28 +14,30 @@ import static org.junit.Assert.assertThat;
 
 public class WeatherTest {
 
+    private TimeProvider timeProvider = () -> LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
+
     @Test
     public void onlyYr() {
-        Weather weather = new Weather(() -> "yr", () -> "");
+        Weather weather = new Weather(timeProvider, () -> "yr", () -> "");
 
         Status status = weather.getStatus();
 
-        assertThat(status.isCritical(), is(false));
+        assertThat(status.getPriority(), is(Priority.LOW));
         assertThat(status.getText(), is("yr"));
     }
 
     @Test
     public void ruterSituationShouldMakeStatusCritical() {
-        Weather weather = new Weather(() -> "yr", () -> "problem");
+        Weather weather = new Weather(timeProvider, () -> "yr", () -> "problem");
 
         Status status = weather.getStatus();
 
-        assertThat(status.isCritical(), is(true));
+        assertThat(status.getPriority(), is(Priority.HIGH));
     }
 
     @Test
     public void yrAndRuterTextsShouldBeConcatinated() {
-        Weather weather = new Weather(() -> "yr", () -> "problem");
+        Weather weather = new Weather(timeProvider, () -> "yr", () -> "problem");
 
         Status status = weather.getStatus();
 
@@ -41,7 +48,7 @@ public class WeatherTest {
     public void bothYrAndRuterShouldBeCalled() {
         AtomicInteger yr = new AtomicInteger(0);
         AtomicInteger ruter = new AtomicInteger(0);
-        Weather weather = new Weather(
+        Weather weather = new Weather(timeProvider,
                 () -> "" + yr.incrementAndGet(),
                 () -> "" + ruter.incrementAndGet());
 
@@ -54,7 +61,7 @@ public class WeatherTest {
     @Test
     public void shouldCompleteRuterFirstIfYrIsSlow() {
         AtomicInteger i = new AtomicInteger(0);
-        Weather weather = new Weather(
+        Weather weather = new Weather(timeProvider,
                 () -> {
                     synchronized (i) {
                         try {
@@ -82,7 +89,7 @@ public class WeatherTest {
     @Test
     public void shouldCompleteYrFirstIfRuterIsSlow() {
         AtomicInteger i = new AtomicInteger(0);
-        Weather weather = new Weather(
+        Weather weather = new Weather(timeProvider,
                 () -> {
                     int c;
                     synchronized (i) {
@@ -109,7 +116,7 @@ public class WeatherTest {
 
     @Test
     public void yrExceptionShouldReturnErrorString() {
-        Weather weather = new Weather(
+        Weather weather = new Weather(timeProvider,
                 () -> { throw new RuntimeException("yr"); },
                 () -> "ruter");
 
@@ -120,7 +127,7 @@ public class WeatherTest {
 
     @Test
     public void ruterExceptionShouldReturnErrorString() {
-        Weather weather = new Weather(
+        Weather weather = new Weather(timeProvider,
                 () -> "yr",
                 () -> { throw new RuntimeException("yr"); });
 
@@ -131,18 +138,18 @@ public class WeatherTest {
 
     @Test
     public void yrExceptionShouldReturnCriticalStatus() {
-        Weather weather = new Weather(
+        Weather weather = new Weather(timeProvider,
                 () -> { throw new RuntimeException("yr"); },
                 () -> "");
 
         Status status = weather.getStatus();
 
-        assertThat(status.isCritical(), is(true));
+        assertThat(status.getPriority(), is(Priority.HIGH));
     }
 
     @Test
     public void timeoutShouldReturnErrorString() {
-        Weather weather = new Weather(1,
+        Weather weather = new Weather(1, timeProvider,
                 () -> {
                     try {
                         Thread.sleep(1_000);
@@ -154,8 +161,53 @@ public class WeatherTest {
 
         Status status = weather.getStatus();
 
-        assertThat(status.isCritical(), is(true));
+        assertThat(status.getPriority(), is(Priority.HIGH));
         assertThat(status.getText(), is("Error yr"));
     }
 
+    @Test
+    public void noProblemsShouldGiveNormalPriorityOnMondays() {
+        LocalDateTime monday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        TimeProvider timeProvider = () -> monday;
+
+        Weather weather = new Weather(1_000, timeProvider,
+                () -> "yr", () -> "");
+
+        assertThat(weather.getStatus().getPriority(), is(Priority.NORMAL));
+    }
+
+    @Test
+    public void noProblemsShouldGiveLowPriorityOnWednesdays() {
+        LocalDateTime wednesday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
+        TimeProvider timeProvider = () -> wednesday;
+
+        Weather weather = new Weather(1_000, timeProvider,
+                () -> "yr", () -> "");
+
+        assertThat(weather.getStatus().getPriority(), is(Priority.LOW));
+    }
+
+    @Test
+    public void problemsShouldGiveHighPriorityOnWednesdays() {
+        LocalDateTime wednesday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
+        TimeProvider timeProvider = () -> wednesday;
+
+        Weather weather = new Weather(1_000, timeProvider,
+                () -> "yr", () -> "ruter: problem");
+
+        assertThat(weather.getStatus().getPriority(), is(Priority.HIGH));
+    }
+
+    @Test
+    public void ruterProblemsShouldGiveLowPriorityOnSundays() {
+        LocalDateTime sunday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+        TimeProvider timeProvider = () -> sunday;
+
+        Weather weather = new Weather(1_000, timeProvider,
+                () -> "yr", () -> "ruter: problem");
+
+        assertThat(weather.getStatus().getPriority(), is(Priority.LOW));
+    }
+
 }
+

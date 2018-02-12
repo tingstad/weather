@@ -2,20 +2,25 @@ package com.github.tingstad.weather.domain;
 
 public class Status {
 
+    public enum Priority implements Comparable<Priority> {
+        LOW,
+        NORMAL,
+        HIGH
+    }
     private final String text;
-    private final boolean critical;
+    private final Priority priority;
 
-    public Status(String text, boolean critical) {
+    public Status(String text, Priority priority) {
         this.text = text;
-        this.critical = critical;
+        this.priority = priority;
     }
 
     public String getText() {
         return text;
     }
 
-    public boolean isCritical() {
-        return critical;
+    public Priority getPriority() {
+        return priority;
     }
 
 }

@@ -1,35 +1,40 @@
 package com.github.tingstad.weather.app;
 
-import com.github.tingstad.weather.service.api.TimeProvider;
+import com.github.tingstad.weather.domain.Status;
+import com.github.tingstad.weather.domain.Status.Priority;
 import org.junit.Test;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjusters;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class MainJobTest {
 
+    private MainJob job = new MainJob(() -> LocalDateTime.now());
+
     @Test
-    public void shouldRunOnMondays() {
-        LocalDateTime monday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
-        TimeProvider timeProvider = () -> monday;
+    public void highPriorityShouldSendSms() {
+        boolean shouldSendSms = job.shouldSendSms(
+                new Status("", Priority.HIGH));
 
-        MainJob job = new MainJob(timeProvider);
-
-        assertThat(job.shouldDoWork(), is(true));
+        assertThat(shouldSendSms, is(true));
     }
 
     @Test
-    public void shouldNotRunOnWednesdays() {
-        LocalDateTime monday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
-        TimeProvider timeProvider = () -> monday;
+    public void normalPriorityShouldSendSms() {
+        boolean shouldSendSms = job.shouldSendSms(
+                new Status("", Priority.NORMAL));
 
-        MainJob job = new MainJob(timeProvider);
+        assertThat(shouldSendSms, is(true));
+    }
 
-        assertThat(job.shouldDoWork(), is(false));
+    @Test
+    public void lowPriorityShouldMotSendSms() {
+        boolean shouldSendSms = job.shouldSendSms(
+                new Status("", Priority.LOW));
+
+        assertThat(shouldSendSms, is(false));
     }
 
 }

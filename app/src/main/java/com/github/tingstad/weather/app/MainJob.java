@@ -5,10 +5,6 @@ import com.github.tingstad.weather.service.api.RealOsloTimeProvider;
 import com.github.tingstad.weather.service.api.TimeProvider;
 import com.github.tingstad.weather.sms.SmsService;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.util.EnumSet;
-
 public class MainJob {
 
     final private TimeProvider timeProvider;
@@ -26,15 +22,13 @@ public class MainJob {
     public void work() {
         Status status = new Composer().create(timeProvider).getStatus();
         String content = status.getText();
-        boolean shouldSendSms = status.isCritical() || shouldDoWork();
-        if (shouldSendSms) {
+        if (shouldSendSms(status)) {
             new SmsService().sendSms(content);
         }
     }
 
-    boolean shouldDoWork() {
-        LocalDateTime time = timeProvider.getTime();
-        return EnumSet.of(DayOfWeek.MONDAY).contains(time.getDayOfWeek());
+    boolean shouldSendSms(Status status) {
+        return status.getPriority() != Status.Priority.LOW;
     }
 
 }

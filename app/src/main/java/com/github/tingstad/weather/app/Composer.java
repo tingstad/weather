@@ -32,7 +32,7 @@ public class Composer {
                 ),
                 timeProvider
         );
-        return new Weather(30_000, yrService, ruterService);
+        return new Weather(30_000, timeProvider, yrService, ruterService);
     }
 
 
