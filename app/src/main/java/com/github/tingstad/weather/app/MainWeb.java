@@ -1,11 +1,9 @@
 package com.github.tingstad.weather.app;
 
-import com.github.tingstad.weather.service.api.RealOsloTimeProvider;
-
 public class MainWeb {
 
     public static void main(String[] args) {
-        WebServer webServer = new WebServer(new Composer().create(new RealOsloTimeProvider()));
+        WebServer webServer = new WebServer(new Composer().create());
         webServer.run(args);
         while (true) {
             try {

@@ -1,5 +1,6 @@
 package com.github.tingstad.weather.app;
 
+import com.github.tingstad.weather.domain.WeatherInterface;
 import com.sun.net.httpserver.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -12,7 +12,7 @@ main() {
         "$REPO"/org/slf4j/slf4j-api/1.7.25/*.jar \
         mods/
 
-    for module in service-api cache http-client service-yr service-ruter sms-service
+    for module in service-api domain cache http-client service-yr service-ruter sms-service
     do
         build $module
     done

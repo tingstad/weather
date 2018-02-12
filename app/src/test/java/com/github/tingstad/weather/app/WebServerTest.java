@@ -1,5 +1,8 @@
 package com.github.tingstad.weather.app;
 
+import com.github.tingstad.weather.domain.Status;
+import com.github.tingstad.weather.domain.Status.Priority;
+import com.github.tingstad.weather.domain.WeatherInterface;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +34,7 @@ public class WebServerTest {
 
     @Test
     public void testPort8080() throws Exception {
-        WeatherInterface weather = () -> new Status("alt ok", false);
+        WeatherInterface weather = () -> new Status("alt ok", Priority.LOW);
         webServer = new WebServer(weather);
 
         webServer.run(new String[]{"8080"});
@@ -61,7 +64,7 @@ public class WebServerTest {
 
     @Test
     public void testPortOtherThan8080() throws Exception {
-        WeatherInterface weather = () -> new Status("alt ok", false);
+        WeatherInterface weather = () -> new Status("alt ok", Priority.LOW);
         webServer = new WebServer(weather);
 
         final String port = "36856";
