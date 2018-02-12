@@ -19,12 +19,18 @@ import static java.util.Arrays.asList;
 public class Weather implements WeatherInterface {
 
     private final static Logger logger = LoggerFactory.getLogger(Weather.class);
+    private final int timeoutMs;
     private final Service yrService;
     private final Service ruterService;
 
-    public Weather(Service yrService, Service ruterService) {
+    public Weather(int timeoutMs, Service yrService, Service ruterService) {
+        this.timeoutMs = timeoutMs;
         this.yrService = yrService;
         this.ruterService = ruterService;
+    }
+
+    Weather(Service yrService, Service ruterService) {
+        this(3_000, yrService, ruterService);
     }
 
     @Override
@@ -42,7 +48,7 @@ public class Weather implements WeatherInterface {
         List<Future<String>> futures = executorService.invokeAll(asList(
                 () -> yrService.getText(),
                 () -> ruterService.getText())
-                , 30, TimeUnit.SECONDS);
+                , timeoutMs, TimeUnit.MILLISECONDS);
         Status yr = getStatus(futures.get(0), "yr");
         Status ruter = getStatus(futures.get(1), "ruter");
         boolean ruterHasContent = ruter.getText().length() > 0;

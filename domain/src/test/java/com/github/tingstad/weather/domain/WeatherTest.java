@@ -52,13 +52,13 @@ public class WeatherTest {
     }
 
     @Test
-    public void shouldCompleteRuterFirstIfYrIsSlow() throws Exception {
+    public void shouldCompleteRuterFirstIfYrIsSlow() {
         AtomicInteger i = new AtomicInteger(0);
         Weather weather = new Weather(
                 () -> {
                     synchronized (i) {
                         try {
-                            i.wait(1000);
+                            i.wait(1_000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -80,7 +80,7 @@ public class WeatherTest {
     }
 
     @Test
-    public void shouldCompleteYrFirstIfRuterIsSlow() throws Exception {
+    public void shouldCompleteYrFirstIfRuterIsSlow() {
         AtomicInteger i = new AtomicInteger(0);
         Weather weather = new Weather(
                 () -> {
@@ -94,7 +94,7 @@ public class WeatherTest {
                 () -> {
                     synchronized (i) {
                         try {
-                            i.wait(1000);
+                            i.wait(1_000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -108,7 +108,7 @@ public class WeatherTest {
     }
 
     @Test
-    public void yrExceptionShouldReturnErrorString() throws Exception {
+    public void yrExceptionShouldReturnErrorString() {
         Weather weather = new Weather(
                 () -> { throw new RuntimeException("yr"); },
                 () -> "ruter");
@@ -119,7 +119,7 @@ public class WeatherTest {
     }
 
     @Test
-    public void ruterExceptionShouldReturnErrorString() throws Exception {
+    public void ruterExceptionShouldReturnErrorString() {
         Weather weather = new Weather(
                 () -> "yr",
                 () -> { throw new RuntimeException("yr"); });
@@ -130,7 +130,7 @@ public class WeatherTest {
     }
 
     @Test
-    public void yrExceptionShouldReturnCriticalStatus() throws Exception {
+    public void yrExceptionShouldReturnCriticalStatus() {
         Weather weather = new Weather(
                 () -> { throw new RuntimeException("yr"); },
                 () -> "");
@@ -138,6 +138,24 @@ public class WeatherTest {
         Status status = weather.getStatus();
 
         assertThat(status.isCritical(), is(true));
+    }
+
+    @Test
+    public void timeoutShouldReturnErrorString() {
+        Weather weather = new Weather(1,
+                () -> {
+                    try {
+                        Thread.sleep(1_000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return "yr"; },
+                () -> "");
+
+        Status status = weather.getStatus();
+
+        assertThat(status.isCritical(), is(true));
+        assertThat(status.getText(), is("Error yr"));
     }
 
 }
