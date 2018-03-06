@@ -1,6 +1,7 @@
 package com.github.tingstad.weather.service.ruter;
 
 import com.github.tingstad.weather.service.api.Service;
+import com.github.tingstad.weather.service.api.Status;
 import com.github.tingstad.weather.service.api.TimeProvider;
 
 import javax.xml.transform.Transformer;
@@ -35,7 +36,12 @@ public class ServiceRuter implements Service {
     }
 
     @Override
-    public String getText() {
+    public Status getStatus() {
+        return Status.create(getText(), Status.Severity.LOW);
+    }
+
+    //TODO: Make private
+    String getText() {
         try (InputStream inputStream = dataSource.get()) {
             return process(inputStream);
         } catch (Exception e) {

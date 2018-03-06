@@ -1,7 +1,8 @@
 package com.github.tingstad.weather.domain;
 
-import com.github.tingstad.weather.domain.Status.Priority;
+import com.github.tingstad.weather.domain.StatusAll.Priority;
 import com.github.tingstad.weather.service.api.Service;
+import com.github.tingstad.weather.service.api.Status.Severity;
 import com.github.tingstad.weather.service.api.TimeProvider;
 import org.junit.Test;
 
@@ -10,6 +11,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.tingstad.weather.service.api.Status.Severity.LOW;
+import static com.github.tingstad.weather.service.api.Status.Severity.MEDIUM;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -19,9 +22,9 @@ public class WeatherTest {
 
     @Test
     public void onlyYr() {
-        Weather weather = new Weather(timeProvider, () -> "yr", () -> "");
+        Weather weather = new Weather(timeProvider, () -> status("yr", LOW), () -> status(LOW));
 
-        Status status = weather.getStatus();
+        StatusAll status = weather.getStatus();
 
         assertThat(status.getPriority(), is(Priority.LOW));
         assertThat(status.getText(), is("yr"));
@@ -29,18 +32,18 @@ public class WeatherTest {
 
     @Test
     public void ruterSituationShouldMakeStatusCritical() {
-        Weather weather = new Weather(timeProvider, () -> "yr", () -> "problem");
+        Weather weather = new Weather(timeProvider, () -> status(LOW), () -> status("problem", MEDIUM));
 
-        Status status = weather.getStatus();
+        StatusAll status = weather.getStatus();
 
         assertThat(status.getPriority(), is(Priority.HIGH));
     }
 
     @Test
     public void yrAndRuterTextsShouldBeConcatinated() {
-        Weather weather = new Weather(timeProvider, () -> "yr", () -> "problem");
+        Weather weather = new Weather(timeProvider, () -> status("yr"), () -> status("problem"));
 
-        Status status = weather.getStatus();
+        StatusAll status = weather.getStatus();
 
         assertThat(status.getText(), is("problem\nyr"));
     }
@@ -50,8 +53,8 @@ public class WeatherTest {
         AtomicInteger yr = new AtomicInteger(0);
         AtomicInteger ruter = new AtomicInteger(0);
         Weather weather = new Weather(timeProvider,
-                () -> "" + yr.incrementAndGet(),
-                () -> "" + ruter.incrementAndGet());
+                () -> status("" + yr.incrementAndGet()),
+                () -> status("" + ruter.incrementAndGet()));
 
         weather.getStatus();
 
@@ -73,7 +76,7 @@ public class WeatherTest {
                             }
                         }
                     }
-                    return "y" + i.incrementAndGet();
+                    return status("y" + i.incrementAndGet());
                 },
                 () -> {
                     int c;
@@ -81,10 +84,10 @@ public class WeatherTest {
                         c = i.incrementAndGet();
                         i.notify();
                     }
-                    return "r" + c;
+                    return status("r" + c);
                 });
 
-        Status status = weather.getStatus();
+        StatusAll status = weather.getStatus();
 
         assertThat(status.getText(), is("r1\ny2"));
     }
@@ -99,7 +102,7 @@ public class WeatherTest {
                         c = i.incrementAndGet();
                         i.notify();
                     }
-                    return "y" + c;
+                    return status("y" + c);
                 },
                 () -> {
                     synchronized (i) {
@@ -111,10 +114,10 @@ public class WeatherTest {
                             }
                         }
                     }
-                    return "r" + i.incrementAndGet();
+                    return status("r" + i.incrementAndGet());
                 });
 
-        Status status = weather.getStatus();
+        StatusAll status = weather.getStatus();
 
         assertThat(status.getText(), is("r2\ny1"));
     }
@@ -123,9 +126,9 @@ public class WeatherTest {
     public void yrExceptionShouldReturnErrorString() {
         Weather weather = new Weather(timeProvider,
                 () -> { throw new RuntimeException("yr"); },
-                () -> "ruter");
+                () -> status("ruter"));
 
-        Status status = weather.getStatus();
+        StatusAll status = weather.getStatus();
 
         assertThat(status.getText(), is("ruter\nError yr"));
     }
@@ -133,10 +136,10 @@ public class WeatherTest {
     @Test
     public void ruterExceptionShouldReturnErrorString() {
         Weather weather = new Weather(timeProvider,
-                () -> "yr",
+                () -> status("yr"),
                 () -> { throw new RuntimeException("yr"); });
 
-        Status status = weather.getStatus();
+        StatusAll status = weather.getStatus();
 
         assertThat(status.getText(), is("Error ruter\nyr"));
     }
@@ -145,9 +148,9 @@ public class WeatherTest {
     public void yrExceptionShouldReturnCriticalStatus() {
         Weather weather = new Weather(timeProvider,
                 () -> { throw new RuntimeException("yr"); },
-                () -> "");
+                () -> status(""));
 
-        Status status = weather.getStatus();
+        StatusAll status = weather.getStatus();
 
         assertThat(status.getPriority(), is(Priority.HIGH));
     }
@@ -161,10 +164,10 @@ public class WeatherTest {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    return "yr"; },
-                () -> "");
+                    return status("yr"); },
+                () -> status(""));
 
-        Status status = weather.getStatus();
+        StatusAll status = weather.getStatus();
 
         assertThat(status.getPriority(), is(Priority.HIGH));
         assertThat(status.getText(), is("Error yr"));
@@ -178,12 +181,12 @@ public class WeatherTest {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            return "foo";
+            return status("foo");
         };
         Weather weather = new Weather(1, timeProvider,
                 timeout, timeout);
 
-        Status status = weather.getStatus();
+        StatusAll status = weather.getStatus();
 
         assertThat(status.getPriority(), is(Priority.HIGH));
         assertThat(status.getText(), is("Error ruter\nError yr"));
@@ -195,7 +198,7 @@ public class WeatherTest {
         TimeProvider timeProvider = () -> monday;
 
         Weather weather = new Weather(1_000, timeProvider,
-                () -> "yr", () -> "");
+                () -> status("yr"), () -> status(""));
 
         assertThat(weather.getStatus().getPriority(), is(Priority.NORMAL));
     }
@@ -206,7 +209,7 @@ public class WeatherTest {
         TimeProvider timeProvider = () -> wednesday;
 
         Weather weather = new Weather(1_000, timeProvider,
-                () -> "yr", () -> "");
+                () -> status("yr"), () -> status(""));
 
         assertThat(weather.getStatus().getPriority(), is(Priority.LOW));
     }
@@ -217,7 +220,7 @@ public class WeatherTest {
         TimeProvider timeProvider = () -> wednesday;
 
         Weather weather = new Weather(1_000, timeProvider,
-                () -> "yr", () -> "ruter: problem");
+                () -> status("yr"), () -> status("ruter: problem"));
 
         assertThat(weather.getStatus().getPriority(), is(Priority.HIGH));
     }
@@ -228,9 +231,21 @@ public class WeatherTest {
         TimeProvider timeProvider = () -> sunday;
 
         Weather weather = new Weather(1_000, timeProvider,
-                () -> "yr", () -> "ruter: problem");
+                () -> status("yr"), () -> status("ruter: problem"));
 
         assertThat(weather.getStatus().getPriority(), is(Priority.LOW));
+    }
+
+    private static com.github.tingstad.weather.service.api.Status status(Severity severity) {
+        return com.github.tingstad.weather.service.api.Status.create("", severity);
+    }
+
+    private static com.github.tingstad.weather.service.api.Status status(String text) {
+        return com.github.tingstad.weather.service.api.Status.create(text, Severity.LOW);
+    }
+
+    private static com.github.tingstad.weather.service.api.Status status(String text, Severity severity) {
+        return com.github.tingstad.weather.service.api.Status.create(text, severity);
     }
 
 }

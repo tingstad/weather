@@ -1,6 +1,6 @@
 package com.github.tingstad.weather.domain;
 
-public class Status {
+public class StatusAll {
 
     public enum Priority implements Comparable<Priority> {
         LOW,
@@ -10,7 +10,7 @@ public class Status {
     private final String text;
     private final Priority priority;
 
-    public Status(String text, Priority priority) {
+    public StatusAll(String text, Priority priority) {
         this.text = text;
         this.priority = priority;
     }
