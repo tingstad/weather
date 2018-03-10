@@ -1,6 +1,7 @@
 package com.github.tingstad.weather.app;
 
 import com.github.tingstad.weather.domain.StatusAll;
+import com.github.tingstad.weather.service.api.Status;
 import com.github.tingstad.weather.sms.SmsService;
 
 public class MainJob {
@@ -18,7 +19,7 @@ public class MainJob {
     }
 
     boolean shouldSendSms(StatusAll status) {
-        return status.getPriority() != StatusAll.Priority.LOW;
+        return status.getSeverity() != Status.Severity.LOW;
     }
 
 }

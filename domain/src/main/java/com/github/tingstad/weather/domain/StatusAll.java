@@ -1,26 +1,23 @@
 package com.github.tingstad.weather.domain;
 
+import com.github.tingstad.weather.service.api.Status;
+
 public class StatusAll {
 
-    public enum Priority implements Comparable<Priority> {
-        LOW,
-        NORMAL,
-        HIGH
-    }
     private final String text;
-    private final Priority priority;
+    private final Status.Severity severity;
 
-    public StatusAll(String text, Priority priority) {
+    public StatusAll(String text, Status.Severity priority) {
         this.text = text;
-        this.priority = priority;
+        this.severity = priority;
     }
 
     public String getText() {
         return text;
     }
 
-    public Priority getPriority() {
-        return priority;
+    public Status.Severity getSeverity() {
+        return severity;
     }
 
 }

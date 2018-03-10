@@ -1,7 +1,7 @@
 package com.github.tingstad.weather.app;
 
 import com.github.tingstad.weather.domain.StatusAll;
-import com.github.tingstad.weather.domain.StatusAll.Priority;
+import com.github.tingstad.weather.service.api.Status;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -14,7 +14,7 @@ public class MainJobTest {
     @Test
     public void highPriorityShouldSendSms() {
         boolean shouldSendSms = job.shouldSendSms(
-                new StatusAll("", Priority.HIGH));
+                new StatusAll("", Status.Severity.HIGH));
 
         assertThat(shouldSendSms, is(true));
     }
@@ -22,7 +22,7 @@ public class MainJobTest {
     @Test
     public void normalPriorityShouldSendSms() {
         boolean shouldSendSms = job.shouldSendSms(
-                new StatusAll("", Priority.NORMAL));
+                new StatusAll("", Status.Severity.MEDIUM));
 
         assertThat(shouldSendSms, is(true));
     }
@@ -30,7 +30,7 @@ public class MainJobTest {
     @Test
     public void lowPriorityShouldMotSendSms() {
         boolean shouldSendSms = job.shouldSendSms(
-                new StatusAll("", Priority.LOW));
+                new StatusAll("", Status.Severity.LOW));
 
         assertThat(shouldSendSms, is(false));
     }

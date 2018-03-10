@@ -1,6 +1,5 @@
 package com.github.tingstad.weather.domain;
 
-import com.github.tingstad.weather.domain.StatusAll.Priority;
 import com.github.tingstad.weather.service.api.Service;
 import com.github.tingstad.weather.service.api.Status.Severity;
 import com.github.tingstad.weather.service.api.TimeProvider;
@@ -26,7 +25,7 @@ public class WeatherTest {
 
         StatusAll status = weather.getStatus();
 
-        assertThat(status.getPriority(), is(Priority.LOW));
+        assertThat(status.getSeverity(), is(Severity.LOW));
         assertThat(status.getText(), is("yr"));
     }
 
@@ -36,7 +35,7 @@ public class WeatherTest {
 
         StatusAll status = weather.getStatus();
 
-        assertThat(status.getPriority(), is(Priority.HIGH));
+        assertThat(status.getSeverity(), is(Severity.HIGH));
     }
 
     @Test
@@ -152,7 +151,7 @@ public class WeatherTest {
 
         StatusAll status = weather.getStatus();
 
-        assertThat(status.getPriority(), is(Priority.HIGH));
+        assertThat(status.getSeverity(), is(Severity.HIGH));
     }
 
     @Test
@@ -169,7 +168,7 @@ public class WeatherTest {
 
         StatusAll status = weather.getStatus();
 
-        assertThat(status.getPriority(), is(Priority.HIGH));
+        assertThat(status.getSeverity(), is(Severity.HIGH));
         assertThat(status.getText(), is("Error yr"));
     }
 
@@ -188,52 +187,52 @@ public class WeatherTest {
 
         StatusAll status = weather.getStatus();
 
-        assertThat(status.getPriority(), is(Priority.HIGH));
+        assertThat(status.getSeverity(), is(Severity.HIGH));
         assertThat(status.getText(), is("Error ruter\nError yr"));
     }
 
     @Test
-    public void noProblemsShouldGiveNormalPriorityOnMondays() {
+    public void noProblemsShouldGiveNormalSeverityOnMondays() {
         LocalDateTime monday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
         TimeProvider timeProvider = () -> monday;
 
         Weather weather = new Weather(1_000, timeProvider,
                 () -> status("yr"), () -> status(""));
 
-        assertThat(weather.getStatus().getPriority(), is(Priority.NORMAL));
+        assertThat(weather.getStatus().getSeverity(), is(Severity.MEDIUM));
     }
 
     @Test
-    public void noProblemsShouldGiveLowPriorityOnWednesdays() {
+    public void noProblemsShouldGiveLowSeverityOnWednesdays() {
         LocalDateTime wednesday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
         TimeProvider timeProvider = () -> wednesday;
 
         Weather weather = new Weather(1_000, timeProvider,
                 () -> status("yr"), () -> status(""));
 
-        assertThat(weather.getStatus().getPriority(), is(Priority.LOW));
+        assertThat(weather.getStatus().getSeverity(), is(Severity.LOW));
     }
 
     @Test
-    public void problemsShouldGiveHighPriorityOnWednesdays() {
+    public void problemsShouldGiveHighSeverityOnWednesdays() {
         LocalDateTime wednesday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
         TimeProvider timeProvider = () -> wednesday;
 
         Weather weather = new Weather(1_000, timeProvider,
                 () -> status("yr"), () -> status("ruter: problem"));
 
-        assertThat(weather.getStatus().getPriority(), is(Priority.HIGH));
+        assertThat(weather.getStatus().getSeverity(), is(Severity.HIGH));
     }
 
     @Test
-    public void ruterProblemsShouldGiveLowPriorityOnSundays() {
+    public void ruterProblemsShouldGiveLowSeverityOnSundays() {
         LocalDateTime sunday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
         TimeProvider timeProvider = () -> sunday;
 
         Weather weather = new Weather(1_000, timeProvider,
                 () -> status("yr"), () -> status("ruter: problem"));
 
-        assertThat(weather.getStatus().getPriority(), is(Priority.LOW));
+        assertThat(weather.getStatus().getSeverity(), is(Severity.LOW));
     }
 
     private static com.github.tingstad.weather.service.api.Status status(Severity severity) {

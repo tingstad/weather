@@ -1,6 +1,5 @@
 package com.github.tingstad.weather.domain;
 
-import com.github.tingstad.weather.domain.StatusAll.Priority;
 import com.github.tingstad.weather.service.api.Service;
 import com.github.tingstad.weather.service.api.Status;
 import com.github.tingstad.weather.service.api.Status.Severity;
@@ -48,7 +47,7 @@ public class Weather implements WeatherInterface {
             return getStatusInternal();
         } catch (Exception e) {
             logger.error("", e);
-            return new StatusAll("Execution exception", Priority.HIGH);
+            return new StatusAll("Execution exception", Severity.HIGH);
         }
     }
 
@@ -77,29 +76,29 @@ public class Weather implements WeatherInterface {
         }
     }
 
-    private Priority getPriority(boolean ruterHasContent, Status yr) {
+    private Severity getPriority(boolean ruterHasContent, Status yr) {
         LocalDateTime time = timeProvider.getTime();
         DayOfWeek dayOfWeek = time.getDayOfWeek();
         boolean isWorkDay = !EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).contains(dayOfWeek);
         if (ruterHasContent) {
-            return isWorkDay ? Priority.HIGH : Priority.LOW;
+            return isWorkDay ? Severity.HIGH : Severity.LOW;
         }
         if (yr.getSeverity().compareTo(Severity.MEDIUM) >= 0) {
-            return isWorkDay ? convert(yr.getSeverity()) : Priority.LOW;
+            return isWorkDay ? convert(yr.getSeverity()) : Severity.LOW;
         }
         return EnumSet.of(DayOfWeek.MONDAY).contains(dayOfWeek)
-                ? Priority.NORMAL
-                : Priority.LOW;
+                ? Severity.MEDIUM
+                : Severity.LOW;
     }
 
-    private static Priority convert(Severity severity) {
+    private static Severity convert(Severity severity) {
         switch (severity) {
             case LOW:
-                return Priority.LOW;
+                return Severity.LOW;
             case MEDIUM:
-                return Priority.NORMAL;
+                return Severity.MEDIUM;
         }
-        return Priority.HIGH;
+        return Severity.HIGH;
     }
 
 }
