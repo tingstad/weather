@@ -10,7 +10,7 @@ public class MainJob {
     }
 
     public void work() {
-        StatusAll status = new Composer().create().getStatus();
+        StatusAll status = Composer.create().getStatus();
         String content = status.getText();
         if (shouldSendSms(status)) {
             new SmsService().sendSms(content);

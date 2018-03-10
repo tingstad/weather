@@ -15,7 +15,7 @@ import com.github.tingstad.weather.service.yr.ServiceYr;
  */
 public class Composer {
 
-    public Weather create() {
+    public static Weather create() {
         TimeProvider timeProvider = new RealOsloTimeProvider();
         Service yrService = new ServiceCached(
                 new ServiceYr(
@@ -34,6 +34,5 @@ public class Composer {
         );
         return new Weather(30_000, timeProvider, yrService, ruterService);
     }
-
 
 }

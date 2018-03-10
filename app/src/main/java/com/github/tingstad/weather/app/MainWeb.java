@@ -3,7 +3,7 @@ package com.github.tingstad.weather.app;
 public class MainWeb {
 
     public static void main(String[] args) {
-        WebServer webServer = new WebServer(new Composer().create());
+        WebServer webServer = new WebServer(Composer.create());
         webServer.run(args);
         while (true) {
             try {
