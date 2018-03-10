@@ -1,6 +1,7 @@
 package com.github.tingstad.weather.domain;
 
 import com.github.tingstad.weather.domain.Status.Priority;
+import com.github.tingstad.weather.service.api.Service;
 import com.github.tingstad.weather.service.api.TimeProvider;
 import org.junit.Test;
 
@@ -64,10 +65,12 @@ public class WeatherTest {
         Weather weather = new Weather(timeProvider,
                 () -> {
                     synchronized (i) {
-                        try {
-                            i.wait(1_000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        if (i.get() == 0) {
+                            try {
+                                i.wait(1_000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                     return "y" + i.incrementAndGet();
@@ -100,10 +103,12 @@ public class WeatherTest {
                 },
                 () -> {
                     synchronized (i) {
-                        try {
-                            i.wait(1_000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        if (i.get() == 0) {
+                            try {
+                                i.wait(1_000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                     return "r" + i.incrementAndGet();
@@ -149,7 +154,7 @@ public class WeatherTest {
 
     @Test
     public void timeoutShouldReturnErrorString() {
-        Weather weather = new Weather(1, timeProvider,
+        Weather weather = new Weather(100, timeProvider,
                 () -> {
                     try {
                         Thread.sleep(1_000);
@@ -163,6 +168,25 @@ public class WeatherTest {
 
         assertThat(status.getPriority(), is(Priority.HIGH));
         assertThat(status.getText(), is("Error yr"));
+    }
+
+    @Test
+    public void timeoutsShouldReturnErrorStrings() {
+        Service timeout = () -> {
+            try {
+                Thread.sleep(1_000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return "foo";
+        };
+        Weather weather = new Weather(1, timeProvider,
+                timeout, timeout);
+
+        Status status = weather.getStatus();
+
+        assertThat(status.getPriority(), is(Priority.HIGH));
+        assertThat(status.getText(), is("Error ruter\nError yr"));
     }
 
     @Test
