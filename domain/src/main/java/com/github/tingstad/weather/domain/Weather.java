@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -46,7 +47,7 @@ public class Weather implements WeatherInterface {
             return getStatusInternal();
         } catch (Exception e) {
             logger.error("", e);
-            return new StatusAll("Execution exception", Severity.HIGH);
+            return new StatusAll("Execution exception", Severity.HIGH, true);
         }
     }
 
@@ -59,11 +60,13 @@ public class Weather implements WeatherInterface {
         Status yr = getStatus(futures.get(0), "yr");
         Status ruter = getStatus(futures.get(1), "ruter");
         String ruterText = ruter.getText();
+        Severity severity = Collections.max(EnumSet.of(yr.getSeverity(), ruter.getSeverity()));
         return new StatusAll(
                 ruterText
                         + (ruterText.isEmpty() ? "" : "\n")
                         + yr.getText()
-                , getPriority(ruter, yr));
+                , severity
+                , shouldSendSms(ruter, yr));
     }
 
     private static Status getStatus(Future<Status> future, String name) {
@@ -73,6 +76,10 @@ public class Weather implements WeatherInterface {
             logger.error(name, e);
             return Status.create("Error " + name, Severity.HIGH);
         }
+    }
+
+    private boolean shouldSendSms(Status ruter, Status yr) {
+        return getPriority(ruter, yr) != Severity.LOW;
     }
 
     private Severity getPriority(Status ruter, Status yr) {
@@ -86,7 +93,7 @@ public class Weather implements WeatherInterface {
             return isWorkDay ? Severity.HIGH : Severity.LOW;
         }
         if (yr.getSeverity().compareTo(Severity.MEDIUM) >= 0) {
-            return isWorkDay ? yr.getSeverity() : Severity.LOW;
+            return isWorkDay ? yr.getSeverity() : Severity.LOW; //TODO: not low on mondays
         }
         return EnumSet.of(DayOfWeek.MONDAY).contains(dayOfWeek)
                 ? Severity.MEDIUM

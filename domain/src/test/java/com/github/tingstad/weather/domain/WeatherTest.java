@@ -35,7 +35,8 @@ public class WeatherTest {
 
         StatusAll status = weather.getStatus();
 
-        assertThat(status.getSeverity(), is(Severity.HIGH));
+        assertThat(status.getSeverity(), is(Severity.MEDIUM));
+        assertThat(status.shouldSendSms(), is(true));
     }
 
     @Test
@@ -89,6 +90,8 @@ public class WeatherTest {
         StatusAll status = weather.getStatus();
 
         assertThat(status.getText(), is("r1\ny2"));
+        assertThat(weather.getStatus().getSeverity(), is(Severity.LOW));
+        assertThat(weather.getStatus().shouldSendSms(), is(false));
     }
 
     @Test
@@ -119,6 +122,8 @@ public class WeatherTest {
         StatusAll status = weather.getStatus();
 
         assertThat(status.getText(), is("r2\ny1"));
+        assertThat(weather.getStatus().getSeverity(), is(Severity.LOW));
+        assertThat(weather.getStatus().shouldSendSms(), is(false));
     }
 
     @Test
@@ -130,6 +135,8 @@ public class WeatherTest {
         StatusAll status = weather.getStatus();
 
         assertThat(status.getText(), is("ruter\nError yr"));
+        assertThat(status.getSeverity(), is(Severity.HIGH));
+        assertThat(weather.getStatus().shouldSendSms(), is(true));
     }
 
     @Test
@@ -142,6 +149,7 @@ public class WeatherTest {
 
         assertThat(status.getText(), is("Error ruter\nyr"));
         assertThat(status.getSeverity(), is(Severity.HIGH));
+        assertThat(weather.getStatus().shouldSendSms(), is(true));
     }
 
     @Test
@@ -153,6 +161,7 @@ public class WeatherTest {
         StatusAll status = weather.getStatus();
 
         assertThat(status.getSeverity(), is(Severity.HIGH));
+        assertThat(weather.getStatus().shouldSendSms(), is(true));
     }
 
     @Test
@@ -171,6 +180,7 @@ public class WeatherTest {
 
         assertThat(status.getSeverity(), is(Severity.HIGH));
         assertThat(status.getText(), is("Error yr"));
+        assertThat(weather.getStatus().shouldSendSms(), is(true));
     }
 
     @Test
@@ -190,21 +200,23 @@ public class WeatherTest {
 
         assertThat(status.getSeverity(), is(Severity.HIGH));
         assertThat(status.getText(), is("Error ruter\nError yr"));
+        assertThat(weather.getStatus().shouldSendSms(), is(true));
     }
 
     @Test
-    public void noProblemsShouldGiveNormalSeverityOnMondays() {
+    public void noProblemsShouldSendSmsOnMondays() {
         LocalDateTime monday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
         TimeProvider timeProvider = () -> monday;
 
         Weather weather = new Weather(1_000, timeProvider,
                 () -> status("yr"), () -> status(""));
 
-        assertThat(weather.getStatus().getSeverity(), is(Severity.MEDIUM));
+        assertThat(weather.getStatus().getSeverity(), is(Severity.LOW));
+        assertThat(weather.getStatus().shouldSendSms(), is(true));
     }
 
     @Test
-    public void noProblemsShouldGiveLowSeverityOnWednesdays() {
+    public void noProblemsShouldNotSendSmsOnWednesdays() {
         LocalDateTime wednesday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
         TimeProvider timeProvider = () -> wednesday;
 
@@ -212,17 +224,19 @@ public class WeatherTest {
                 () -> status("yr"), () -> status(""));
 
         assertThat(weather.getStatus().getSeverity(), is(Severity.LOW));
+        assertThat(weather.getStatus().shouldSendSms(), is(false));
     }
 
     @Test
-    public void problemsShouldGiveHighSeverityOnWednesdays() {
+    public void problemsShouldSendSmsOnWednesdays() {
         LocalDateTime wednesday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
         TimeProvider timeProvider = () -> wednesday;
 
         Weather weather = new Weather(1_000, timeProvider,
                 () -> status("yr"), () -> status("ruter: problem", Severity.MEDIUM));
 
-        assertThat(weather.getStatus().getSeverity(), is(Severity.HIGH));
+        assertThat(weather.getStatus().getSeverity(), is(Severity.MEDIUM));
+        assertThat(weather.getStatus().shouldSendSms(), is(true));
     }
 
     @Test
@@ -234,6 +248,7 @@ public class WeatherTest {
                 () -> status("yr"), () -> status("ruter: problem"));
 
         assertThat(weather.getStatus().getSeverity(), is(Severity.LOW));
+        assertThat(weather.getStatus().shouldSendSms(), is(false));
     }
 
     private static com.github.tingstad.weather.service.api.Status status(Severity severity) {

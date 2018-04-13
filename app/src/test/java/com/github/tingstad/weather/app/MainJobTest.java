@@ -14,25 +14,9 @@ public class MainJobTest {
     @Test
     public void highPriorityShouldSendSms() {
         boolean shouldSendSms = job.shouldSendSms(
-                new StatusAll("", Status.Severity.HIGH));
+                new StatusAll("", Status.Severity.HIGH, true));
 
         assertThat(shouldSendSms, is(true));
-    }
-
-    @Test
-    public void normalPriorityShouldSendSms() {
-        boolean shouldSendSms = job.shouldSendSms(
-                new StatusAll("", Status.Severity.MEDIUM));
-
-        assertThat(shouldSendSms, is(true));
-    }
-
-    @Test
-    public void lowPriorityShouldMotSendSms() {
-        boolean shouldSendSms = job.shouldSendSms(
-                new StatusAll("", Status.Severity.LOW));
-
-        assertThat(shouldSendSms, is(false));
     }
 
 }
