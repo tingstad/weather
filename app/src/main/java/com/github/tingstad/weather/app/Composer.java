@@ -1,6 +1,8 @@
 package com.github.tingstad.weather.app;
 
+import com.github.tingstad.weather.domain.SmsLimitedWeather;
 import com.github.tingstad.weather.domain.Weather;
+import com.github.tingstad.weather.domain.WeatherInterface;
 import com.github.tingstad.weather.http.HttpClient;
 import com.github.tingstad.weather.service.api.Service;
 import com.github.tingstad.weather.service.api.TimeProvider;
@@ -14,7 +16,7 @@ import com.github.tingstad.weather.service.yr.ServiceYr;
  */
 public class Composer {
 
-    public static Weather create() {
+    public static WeatherInterface create() {
         TimeProvider timeProvider = new RealOsloTimeProvider();
         Service yrService = new ServiceCached(
                 new ServiceYr(
@@ -31,7 +33,10 @@ public class Composer {
                 ),
                 timeProvider
         );
-        return new Weather(30_000, timeProvider, yrService, ruterService);
+        return new SmsLimitedWeather(
+                new Weather(30_000, timeProvider, yrService, ruterService)
+                , timeProvider
+        );
     }
 
 }

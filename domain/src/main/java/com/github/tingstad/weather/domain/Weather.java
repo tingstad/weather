@@ -79,25 +79,14 @@ public class Weather implements WeatherInterface {
     }
 
     private boolean shouldSendSms(Status ruter, Status yr) {
-        return getPriority(ruter, yr) != Severity.LOW;
-    }
-
-    private Severity getPriority(Status ruter, Status yr) {
-        if (EnumSet.of(ruter.getSeverity(), yr.getSeverity()).contains(Severity.HIGH)) {
-            return Severity.HIGH;
+        Severity severity = Collections.max(EnumSet.of(yr.getSeverity(), ruter.getSeverity()));
+        if (severity == Severity.HIGH) {
+            return true;
         }
         LocalDateTime time = timeProvider.getTime();
         DayOfWeek dayOfWeek = time.getDayOfWeek();
         boolean isWorkDay = !EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).contains(dayOfWeek);
-        if (ruter.getSeverity().compareTo(Severity.MEDIUM) >= 0) {
-            return isWorkDay ? Severity.HIGH : Severity.LOW;
-        }
-        if (yr.getSeverity().compareTo(Severity.MEDIUM) >= 0) {
-            return isWorkDay ? yr.getSeverity() : Severity.LOW; //TODO: not low on mondays
-        }
-        return EnumSet.of(DayOfWeek.MONDAY).contains(dayOfWeek)
-                ? Severity.MEDIUM
-                : Severity.LOW;
+        return isWorkDay;
     }
 
 }

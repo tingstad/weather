@@ -27,6 +27,7 @@ public class WeatherTest {
 
         assertThat(status.getSeverity(), is(Severity.LOW));
         assertThat(status.getText(), is("yr"));
+        assertThat(status.shouldSendSms(), is(true));
     }
 
     @Test
@@ -46,6 +47,7 @@ public class WeatherTest {
         StatusAll status = weather.getStatus();
 
         assertThat(status.getText(), is("problem\nyr"));
+        assertThat(status.shouldSendSms(), is(true));
     }
 
     @Test
@@ -91,7 +93,7 @@ public class WeatherTest {
 
         assertThat(status.getText(), is("r1\ny2"));
         assertThat(weather.getStatus().getSeverity(), is(Severity.LOW));
-        assertThat(weather.getStatus().shouldSendSms(), is(false));
+        assertThat(weather.getStatus().shouldSendSms(), is(true));
     }
 
     @Test
@@ -123,7 +125,7 @@ public class WeatherTest {
 
         assertThat(status.getText(), is("r2\ny1"));
         assertThat(weather.getStatus().getSeverity(), is(Severity.LOW));
-        assertThat(weather.getStatus().shouldSendSms(), is(false));
+        assertThat(weather.getStatus().shouldSendSms(), is(true));
     }
 
     @Test
@@ -216,8 +218,8 @@ public class WeatherTest {
     }
 
     @Test
-    public void noProblemsShouldNotSendSmsOnWednesdays() {
-        LocalDateTime wednesday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
+    public void noProblemsShouldNotSendSmsOnSaturdays() {
+        LocalDateTime wednesday = LocalDateTime.now().with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
         TimeProvider timeProvider = () -> wednesday;
 
         Weather weather = new Weather(1_000, timeProvider,
