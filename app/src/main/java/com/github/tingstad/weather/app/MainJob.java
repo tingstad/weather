@@ -7,6 +7,7 @@ public class MainJob {
 
     public static void main(String[] args) {
         new MainJob().work();
+        System.exit(0);
     }
 
     public void work() {
