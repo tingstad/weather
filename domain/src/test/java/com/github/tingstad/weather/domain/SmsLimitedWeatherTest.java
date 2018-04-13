@@ -5,9 +5,11 @@ import com.github.tingstad.weather.service.api.TimeProvider;
 import org.junit.Test;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 
+import static java.time.LocalDateTime.now;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -41,6 +43,15 @@ public class SmsLimitedWeatherTest {
         );
     }
 
+    @Test
+    public void shouldSendLowSeverityOnLastWorkdayOfMonth() {
+        TimeProvider lastWorkDayOfMonth = () -> SmsLimitedWeather.getLastWorkDayOfMonth(
+                LocalDate.of(2018, 9, 1).atStartOfDay()).atStartOfDay();
+        assertTrue(
+                shouldSendSms(sms(Severity.LOW), lastWorkDayOfMonth)
+        );
+    }
+
     private static boolean shouldSendSms(StatusAll status, TimeProvider timeProvider) {
         return new SmsLimitedWeather(weather(status), timeProvider).getStatus()
                 .shouldSendSms();
@@ -51,7 +62,7 @@ public class SmsLimitedWeatherTest {
     }
 
     private static TimeProvider day(DayOfWeek dayOfWeek) {
-        return () -> LocalDateTime.now()
+        return () -> now()
                 .with(TemporalAdjusters.next(dayOfWeek));
     }
 

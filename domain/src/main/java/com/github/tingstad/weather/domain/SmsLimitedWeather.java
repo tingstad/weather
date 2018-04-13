@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 
@@ -49,7 +50,27 @@ public class SmsLimitedWeather implements WeatherInterface {
         if (dayOfWeek == DayOfWeek.MONDAY) {
             return true;
         }
+        if (isLastWorkDayOfMonth(time)) {
+            return true;
+        }
         return false;
+    }
+
+    private static boolean isLastWorkDayOfMonth(LocalDateTime time) {
+        return getLastWorkDayOfMonth(time).equals(time.toLocalDate());
+    }
+
+    static LocalDate getLastWorkDayOfMonth(final LocalDateTime time) {
+        final LocalDate lastDayOfMonth = time.withDayOfMonth(1)
+                .plusMonths(1)
+                .minusDays(1)
+                .toLocalDate();
+        final EnumSet<DayOfWeek> weekend = EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
+        LocalDate date = lastDayOfMonth;
+        while (weekend.contains(date.getDayOfWeek())) {
+            date = date.minusDays(1);
+        }
+        return date;
     }
 
 }
