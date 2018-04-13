@@ -136,11 +136,12 @@ public class WeatherTest {
     public void ruterExceptionShouldReturnErrorString() {
         Weather weather = new Weather(timeProvider,
                 () -> status("yr"),
-                () -> { throw new RuntimeException("yr"); });
+                () -> { throw new RuntimeException("ruter"); });
 
         StatusAll status = weather.getStatus();
 
         assertThat(status.getText(), is("Error ruter\nyr"));
+        assertThat(status.getSeverity(), is(Severity.HIGH));
     }
 
     @Test

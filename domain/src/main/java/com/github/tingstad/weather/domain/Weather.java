@@ -77,6 +77,9 @@ public class Weather implements WeatherInterface {
     }
 
     private Severity getPriority(Status ruter, Status yr) {
+        if (EnumSet.of(ruter.getSeverity(), yr.getSeverity()).contains(Severity.HIGH)) {
+            return Severity.HIGH;
+        }
         LocalDateTime time = timeProvider.getTime();
         DayOfWeek dayOfWeek = time.getDayOfWeek();
         boolean isWorkDay = !EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).contains(dayOfWeek);
