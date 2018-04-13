@@ -1,4 +1,6 @@
-package com.github.tingstad.weather.service.api;
+package com.github.tingstad.weather.app;
+
+import com.github.tingstad.weather.service.api.TimeProvider;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

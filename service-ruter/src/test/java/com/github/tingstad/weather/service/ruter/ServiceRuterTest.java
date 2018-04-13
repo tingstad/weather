@@ -1,5 +1,7 @@
 package com.github.tingstad.weather.service.ruter;
 
+import com.github.tingstad.weather.service.api.Status;
+import com.github.tingstad.weather.service.api.Status.Severity;
 import com.github.tingstad.weather.service.api.TimeProvider;
 import org.junit.Test;
 
@@ -17,42 +19,47 @@ import static org.junit.Assert.assertTrue;
 public class ServiceRuterTest {
 
     @Test
-    public void situationShouldReturnString() {
+    public void situationShouldReturnTextAndSeverityMedium() {
         TimeProvider timeProvider = () -> LocalDate.of(2018, 2, 10).atStartOfDay();
 
-        String text = new ServiceRuter(new FileDataSource(), timeProvider, 1).getText();
+        Status status = new ServiceRuter(new FileDataSource(), timeProvider, 1).getStatus();
 
-        assertThat(text, is("Forsinkelser"
+        assertThat(status.getText(), is("Forsinkelser"
                 + "\nDet er for øyeblikket forsinkelser på enkelte avganger."
                 + "\nSjekk sanntid for oppdaterte avgangstider."));
+        assertThat(status.getSeverity(), is(Severity.MEDIUM));
     }
 
     @Test
-    public void situationOfEndedPeriodShouldReturnEmptyString() {
+    public void situationOfEndedPeriodShouldReturnEmptyStringAndSeverityLow() {
         TimeProvider timeProvider = () -> LocalDateTime.now().plusDays(1);
 
-        String text = new ServiceRuter(new FileDataSource(), timeProvider, 1).getText();
+        Status status = new ServiceRuter(new FileDataSource(), timeProvider, 1).getStatus();
 
-        assertThat(text, is(""));
+        assertThat(status.getText(), is(""));
+        assertThat(status.getSeverity(), is(Severity.LOW));
     }
 
     @Test
-    public void situationStartingAfterCurrentDateShouldReturnEmptyString() {
+    public void situationStartingAfterCurrentDate() {
         TimeProvider timeProvider = () -> LocalDate.of(2018, 1, 1).atStartOfDay();
 
-        String text = new ServiceRuter(new FileDataSource(), timeProvider, 1).getText();
+        Status status = new ServiceRuter(new FileDataSource(), timeProvider, 1).getStatus();
 
-        assertThat(text, is(""));
+        assertThat(status.getText(), is(""));
+        assertThat(status.getSeverity(), is(Severity.LOW));
     }
 
     @Test
     public void situationWithoutDetail() {
         TimeProvider timeProvider = () -> LocalDate.of(2018, 2, 10).atStartOfDay();
 
-        String text = new ServiceRuter(new FileDataSource(), timeProvider, 3352).getText();
+        Status status = new ServiceRuter(new FileDataSource(), timeProvider, 3352).getStatus();
 
+        String text = status.getText();
         assertTrue(text.startsWith("Forhåndsbestilling av transport fra enkelte holdeplasser\nSkal du reise fra"));
         assertThat(text.replaceAll("[^\n]", "").length(), is(2));
+        assertThat(status.getSeverity(), is(Severity.MEDIUM));
     }
 
 }

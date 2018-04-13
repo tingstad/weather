@@ -1,6 +1,7 @@
 package com.github.tingstad.weather.service.yr;
 
 import com.github.tingstad.weather.service.api.Service;
+import com.github.tingstad.weather.service.api.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -34,7 +35,11 @@ public class ServiceYr implements Service {
     }
 
     @Override
-    public String getText() {
+    public Status getStatus() {
+        return Status.create(getText(), Status.Severity.LOW);
+    }
+
+    private String getText() {
         try {
             return getValue();
         } catch (Exception e) {
