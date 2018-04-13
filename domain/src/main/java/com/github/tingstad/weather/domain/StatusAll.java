@@ -26,4 +26,10 @@ public class StatusAll {
         return shouldSendSms;
     }
 
+    @Override
+    public String toString() {
+        return String.format("Status{ text: %s, severity: %s, shouldSendSms: %s }",
+                text, severity, shouldSendSms);
+    }
+
 }

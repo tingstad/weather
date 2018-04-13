@@ -43,12 +43,15 @@ public class Weather implements WeatherInterface {
 
     @Override
     public StatusAll getStatus() {
+        StatusAll status;
         try {
-            return getStatusInternal();
+            status = getStatusInternal();
         } catch (Exception e) {
             logger.error("", e);
-            return new StatusAll("Execution exception", Severity.HIGH, true);
+            status = new StatusAll("Execution exception", Severity.HIGH, true);
         }
+        logger.info(status.toString());
+        return status;
     }
 
     private StatusAll getStatusInternal() throws InterruptedException {
