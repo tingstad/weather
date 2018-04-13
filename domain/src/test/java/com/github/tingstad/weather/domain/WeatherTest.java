@@ -219,7 +219,7 @@ public class WeatherTest {
         TimeProvider timeProvider = () -> wednesday;
 
         Weather weather = new Weather(1_000, timeProvider,
-                () -> status("yr"), () -> status("ruter: problem"));
+                () -> status("yr"), () -> status("ruter: problem", Severity.MEDIUM));
 
         assertThat(weather.getStatus().getSeverity(), is(Severity.HIGH));
     }

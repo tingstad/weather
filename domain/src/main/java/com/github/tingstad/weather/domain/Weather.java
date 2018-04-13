@@ -51,7 +51,7 @@ public class Weather implements WeatherInterface {
         }
     }
 
-    private StatusAll getStatusInternal() throws InterruptedException, ExecutionException {
+    private StatusAll getStatusInternal() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
         List<Future<Status>> futures = executorService.invokeAll(asList(
                 () -> yrService.getStatus(),
@@ -59,15 +59,15 @@ public class Weather implements WeatherInterface {
                 , timeoutMs, TimeUnit.MILLISECONDS);
         Status yr = getStatus(futures.get(0), "yr");
         Status ruter = getStatus(futures.get(1), "ruter");
-        boolean ruterHasContent = ruter.getText().length() > 0;
+        String ruterText = ruter.getText();
         return new StatusAll(
-                ruter.getText()
-                        + (ruterHasContent ? "\n" : "")
+                ruterText
+                        + (ruterText.isEmpty() ? "" : "\n")
                         + yr.getText()
-                , getPriority(ruterHasContent, yr));
+                , getPriority(ruter, yr));
     }
 
-    private static Status getStatus(Future<Status> future, String name) throws InterruptedException, ExecutionException {
+    private static Status getStatus(Future<Status> future, String name) {
         try {
             return future.get();
         } catch (Exception e) {
@@ -76,11 +76,11 @@ public class Weather implements WeatherInterface {
         }
     }
 
-    private Severity getPriority(boolean ruterHasContent, Status yr) {
+    private Severity getPriority(Status ruter, Status yr) {
         LocalDateTime time = timeProvider.getTime();
         DayOfWeek dayOfWeek = time.getDayOfWeek();
         boolean isWorkDay = !EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).contains(dayOfWeek);
-        if (ruterHasContent) {
+        if (ruter.getSeverity().equals(Severity.MEDIUM)) {
             return isWorkDay ? Severity.HIGH : Severity.LOW;
         }
         if (yr.getSeverity().compareTo(Severity.MEDIUM) >= 0) {
