@@ -53,7 +53,7 @@ public class Weather implements WeatherInterface {
 
     private StatusAll getStatusInternal() throws InterruptedException, ExecutionException {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
-        List<Future<com.github.tingstad.weather.service.api.Status>> futures = executorService.invokeAll(asList(
+        List<Future<Status>> futures = executorService.invokeAll(asList(
                 () -> yrService.getStatus(),
                 () -> ruterService.getStatus())
                 , timeoutMs, TimeUnit.MILLISECONDS);
@@ -84,21 +84,11 @@ public class Weather implements WeatherInterface {
             return isWorkDay ? Severity.HIGH : Severity.LOW;
         }
         if (yr.getSeverity().compareTo(Severity.MEDIUM) >= 0) {
-            return isWorkDay ? convert(yr.getSeverity()) : Severity.LOW;
+            return isWorkDay ? yr.getSeverity() : Severity.LOW;
         }
         return EnumSet.of(DayOfWeek.MONDAY).contains(dayOfWeek)
                 ? Severity.MEDIUM
                 : Severity.LOW;
-    }
-
-    private static Severity convert(Severity severity) {
-        switch (severity) {
-            case LOW:
-                return Severity.LOW;
-            case MEDIUM:
-                return Severity.MEDIUM;
-        }
-        return Severity.HIGH;
     }
 
 }
