@@ -2,6 +2,8 @@ package com.github.tingstad.weather.domain;
 
 import com.github.tingstad.weather.service.api.Status.Severity;
 import com.github.tingstad.weather.service.api.TimeProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -9,6 +11,7 @@ import java.util.EnumSet;
 
 public class SmsLimitedWeather implements WeatherInterface {
 
+    private final static Logger logger = LoggerFactory.getLogger(SmsLimitedWeather.class);
     private final WeatherInterface origin;
     private final TimeProvider timeProvider;
 
@@ -20,11 +23,13 @@ public class SmsLimitedWeather implements WeatherInterface {
     @Override
     public StatusAll getStatus() {
         StatusAll status = origin.getStatus();
-        return new StatusAll(
+        StatusAll result = new StatusAll(
                 status.getText()
                 , status.getSeverity()
                 , shouldSendSms(status)
         );
+        logger.info(result.toString());
+        return result;
     }
 
     private boolean shouldSendSms(StatusAll status) {

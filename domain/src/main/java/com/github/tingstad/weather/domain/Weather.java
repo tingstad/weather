@@ -50,7 +50,6 @@ public class Weather implements WeatherInterface {
             logger.error("", e);
             status = new StatusAll("Execution exception", Severity.HIGH, true);
         }
-        logger.info(status.toString());
         return status;
     }
 
