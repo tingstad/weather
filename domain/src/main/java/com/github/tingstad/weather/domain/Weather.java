@@ -11,7 +11,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -83,7 +82,7 @@ public class Weather implements WeatherInterface {
         LocalDateTime time = timeProvider.getTime();
         DayOfWeek dayOfWeek = time.getDayOfWeek();
         boolean isWorkDay = !EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).contains(dayOfWeek);
-        if (ruter.getSeverity().equals(Severity.MEDIUM)) {
+        if (ruter.getSeverity().compareTo(Severity.MEDIUM) >= 0) {
             return isWorkDay ? Severity.HIGH : Severity.LOW;
         }
         if (yr.getSeverity().compareTo(Severity.MEDIUM) >= 0) {
