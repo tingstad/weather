@@ -8,9 +8,9 @@ public class StatusAll {
     private final Status.Severity severity;
     private final boolean shouldSendSms;
 
-    public StatusAll(String text, Status.Severity priority, boolean shouldSendSms) {
+    public StatusAll(String text, Status.Severity severity, boolean shouldSendSms) {
         this.text = text;
-        this.severity = priority;
+        this.severity = severity;
         this.shouldSendSms = shouldSendSms;
     }
 
