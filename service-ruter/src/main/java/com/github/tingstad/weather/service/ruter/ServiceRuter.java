@@ -37,11 +37,11 @@ public class ServiceRuter implements Service {
 
     @Override
     public Status getStatus() {
-        return Status.create(getText(), Status.Severity.LOW);
+        String text = getText();
+        return Status.create(text, Status.Severity.LOW);
     }
 
-    //TODO: Make private
-    String getText() {
+    private String getText() {
         try (InputStream inputStream = dataSource.get()) {
             return process(inputStream);
         } catch (Exception e) {
