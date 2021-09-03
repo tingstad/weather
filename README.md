@@ -1,4 +1,4 @@
-# weather
+⚠️ Inactive project ⚠️
 
 An application which sends me weather forecast and other statuses. Current architecture:
 
